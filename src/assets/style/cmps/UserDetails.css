@@ -1,0 +1,13 @@
+.user-details img {
+    max-width: 200px;
+    display: block;
+    margin: auto;
+}
+
+.user-profile {
+    display: flex;
+}
+
+.user-profile article {
+    margin-left: 10px;
+}

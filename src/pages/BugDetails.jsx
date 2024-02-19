@@ -30,7 +30,7 @@ export function BugDetails() {
     return <div className="bug-details main-layout">
         <h3>Bug Details 🐛</h3>
         <h4>{bug.title}</h4>
-        {bug.desc && <p>Description: <span>{bug.desc}</span></p>}
+        {bug.description && <p>Description: <span>{bug.description}</span></p>}
         <p>Severity: <span>{bug.severity}</span></p>
         <p>Labels: <span>{bug.labels.map(label => `"${label}"`).join(', ')}</span></p>
         <Link to="/bug">Back to List</Link>

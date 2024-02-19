@@ -21,9 +21,9 @@ export const bugService = {
 
 async function query(sort, filterBy) {
 
-    const { severity, minSeverity, txt, pageIdx } = filterBy
+    const { severity, minSeverity, txt, creator, pageIdx } = filterBy
     const { sortBy, sortDir } = sort
-    const params = { severity, minSeverity, txt, sortBy, sortDir, pageIdx }
+    const params = { severity, minSeverity, txt, creator, sortBy, sortDir, pageIdx }
 
     try {
         const { data: bugs, status} = await axios.get(BASE_BUG_URL, { params })
@@ -74,6 +74,7 @@ function getDefaultFilter() {
         minSeverity: -1,
         txt: '',
         labels: [],
+        creator: '',
         pageIdx: undefined
     }
 }

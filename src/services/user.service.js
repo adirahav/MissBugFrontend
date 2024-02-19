@@ -16,8 +16,8 @@ export const userService = {
     getUsers,
     getById,
     remove,
-    update,
     saveLocalUser,
+    save,
     getLoggedinUser,
     getEmptyUser
 }
@@ -25,7 +25,6 @@ export const userService = {
 async function getUsers() {
     try {
         const { data: users, status} = await axios.get(BASE_USER_URL)
-        
         return users
     } catch(err) {
         console.log("Had problems getting users")
@@ -49,17 +48,20 @@ async function remove(userId) {
     // await fetch({method: 'DELETE', url})
 }
 
-async function update(userToUpdate) {
-    const updatedUser = await axios.put(BASE_USER_URL, userToUpdate)
-    if (getLoggedinUser().id === updatedUser.id) saveLocalUser(updatedUser)
-    return updatedUser
-}
-
 function saveLocalUser(user) {
     user = { _id: user._id, fullname: user.fullname, isAdmin: user.isAdmin }
     sessionStorage.setItem(STORAGE_KEY_LOGGEDIN_USER, JSON.stringify(user))
     return user
 }
+
+async function save(userToSave) {
+    userToSave._id = userToSave._id || ''
+
+    const method = userToSave._id ? 'put' : 'post'
+    const { data: savedUser } = await axios[method](BASE_USER_URL, userToSave)
+    return savedUser
+}
+
 
 function getLoggedinUser() {
     return JSON.parse(sessionStorage.getItem(STORAGE_KEY_LOGGEDIN_USER))
@@ -71,5 +73,6 @@ function getEmptyUser() {
         fullname: '',
         password: '',
         imgUrl: '',
+        score: 0,
     }
 }

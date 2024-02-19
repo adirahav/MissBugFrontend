@@ -7,16 +7,19 @@ import { utilService } from '../services/util.service.js'
 import { BugPaging } from '../cmps/BugPaging.jsx'
 import { bugService } from '../services/bug.service.js'
 import { showSuccessMsg, showErrorMsg } from '../services/event-bus.service.js'
+import { useSelector } from 'react-redux'
 
 export function BugIndex() {
-  const [bugs, setBugs] = useState([])
+  const [bugs, setBugs] = useState(null)
   const [sort, setSortBy] = useState(bugService.getDefaultSort)
   const [filterBy, setFilterBy] = useState(bugService.getDefaultFilter)
+  
   const debouncedSetFilterBy = useCallback(utilService.debounce(onSetFilter, 500), [])
-
+  const loggedinUser = useSelector(storeState => storeState.userModule.loggedinUser)
+  
   useEffect(() => {
     loadBugs()
-  }, [sort, filterBy])
+  }, [sort, filterBy, loggedinUser])
 
   // bugs list
   async function loadBugs() {
@@ -33,7 +36,7 @@ export function BugIndex() {
     bugs.list.forEach(bug => {
       pdf.text(`Bug ${bug._id}`, 10, yosition += 20)
       pdf.text(`Title: ${bug.title}`, 20, yosition += 10)
-      pdf.text(`Description: ${bug.desc}`, 20, yosition += 10)
+      pdf.text(`Description: ${bug.description}`, 20, yosition += 10)
       pdf.text(`Severity: ${bug.severity}`, 20, yosition += 10)
       pdf.text(`Labels: ${bug.labels.join(', ')}`, 20, yosition += 10)
     })
@@ -58,7 +61,7 @@ export function BugIndex() {
   async function onAddBug() {
     const bug = {
       title: prompt('Bug title?'),
-      desc: prompt('Bug description?'),
+      description: prompt('Bug description?'),
       severity: +prompt('Bug severity?'),
       labels: prompt('Bug labels? (separate with \',\')'),
     }
@@ -83,20 +86,22 @@ export function BugIndex() {
 
   // edit bug
   async function onEditBug(bug) {
-    const desc = prompt('New description?')
+    const title = prompt('New title?')
+    const description = prompt('New description?')
     const severity = +prompt('New severity?')
     const labels = prompt('Bug labels? (separate by \',\')')
     const bugToSave = { 
       ...bug, 
-      desc, 
+      title,
+      description, 
       severity, 
       labels: labels.trim() !== "" ? labels.split(',').map(label => label.trim()) : [] 
     }
-    console.log("bugToSave = " + JSON.stringify(bugToSave))
+    //console.log("bugToSave = " + JSON.stringify(bugToSave))
     try {
 
       const savedBug = await bugService.save(bugToSave)
-      console.log('Updated Bug:', savedBug)
+      //console.log('Updated Bug:', savedBug)
       setBugs(prevBugs => ({ ...prevBugs, list: prevBugs.list.map((currBug) =>
         currBug._id === savedBug._id ? savedBug : currBug
       ) }))
@@ -123,14 +128,15 @@ export function BugIndex() {
     setFilterBy(newFilter)
   }
   
-  if (!bugs || bugs.length == 0) return <div>Loading...</div>
+  if (!bugs) return <div>Loading...</div>
+  if (bugs.list.length === 0) return <div><button onClick={onAddBug}>Add Bug ⛐</button><p>No bugs reported</p></div>
   
   return (
     <main className="main-layout">
       <h3>Bugs App</h3>
       <main>
         <BugPaging paging={bugs.paging} filterBy={filterBy} onSetFilter={onSetPaging} />
-        <button onClick={onAddBug}>Add Bug ⛐</button> <button onClick={downloadBugsPDF}>Download PDF</button> 
+        {loggedinUser && <button onClick={onAddBug}>Add Bug ⛐</button> }<button onClick={downloadBugsPDF}>Download PDF</button> 
         <BugSort sort={sort} onSetSort={onSetSort} />
         <BugFilter filterBy={filterBy} onSetFilter={debouncedSetFilterBy} />
         <BugList bugs={bugs.list} onRemoveBug={onRemoveBug} onEditBug={onEditBug} />

@@ -1,26 +1,19 @@
+import { Link } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 import { UserPreview } from './UserPreview'
 
-export function UserList({ users, onRemoveUser, onEditUser }) {
+export function UserList({ onRemoveUser, onEditUser }) {
+  const users = useSelector(storeState => storeState.userModule.users)
+
   return (
     <ul className="user-list">
       {users.map((user) => (
         <li className="user-preview" key={user._id}>
           <UserPreview user={user} />
           <div>
-            <button
-              onClick={() => {
-                onRemoveUser(user._id)
-              }}
-            >
-              x
-            </button>
-            <button
-              onClick={() => {
-                onEditUser(user)
-              }}
-            >
-              Edit
-            </button>
+            {user.bugsCount === 0 && <button onClick={() => { onRemoveUser(user._id) }}>Delete</button>}
+            <button onClick={() => { onEditUser(user) }}>Edit</button>
+            <button><Link to={`/user/${user._id}`}>Details</Link></button>
           </div>
         </li>
       ))}

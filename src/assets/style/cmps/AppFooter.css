@@ -1,0 +1,6 @@
+.app-footer {
+    background-color: var(--clr1);
+    color: var(--clr2bg-light);
+    text-align: center;
+    margin-top: 10px;
+}

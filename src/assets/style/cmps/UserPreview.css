@@ -6,6 +6,10 @@
     align-items: center;
 }
 
+.user-preview article {
+    min-height: 250px;
+}
+
 .user-preview h4 {
     text-transform: capitalize;
     color: black;

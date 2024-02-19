@@ -1,13 +1,17 @@
 
 import { Link } from 'react-router-dom'
 import { BugPreview } from './BugPreview'
-import { userService } from '../services/user.service'
+import { useSelector } from 'react-redux'
 
 export function BugList({ bugs, onRemoveBug, onEditBug }) {
-  const loggedinUser = userService.getLoggedinUser()
+  const loggedinUser = useSelector(storeState => storeState.userModule.loggedinUser)
 
-  function isAllowed(bug) { // event bus / context / store
-    return loggedinUser && bug.owner?._id === loggedinUser?._id || loggedinUser?.isAdmin
+  function allowedDelete(bug) { // event bus / context / store
+    return loggedinUser && (bug.creator?._id === loggedinUser?._id || loggedinUser?.isAdmin) && onRemoveBug
+  }
+
+  function allowEdit(bug) { // event bus / context / store
+    return loggedinUser && (bug.creator?._id === loggedinUser?._id || loggedinUser?.isAdmin) && onEditBug
   }
 
   return (
@@ -16,8 +20,8 @@ export function BugList({ bugs, onRemoveBug, onEditBug }) {
         <li className="bug-preview" key={bug._id}>
           <BugPreview bug={bug} />
           <div>
-            {isAllowed(bug) && <button onClick={() => {onRemoveBug(bug._id)}}>Delete</button>}
-            {isAllowed(bug) && <button onClick={() => {onEditBug(bug)}}>Edit</button>}
+            {allowedDelete(bug) && <button onClick={() => { onRemoveBug(bug._id) }}>Delete</button> }
+            {allowEdit(bug) && <button onClick={() => { onEditBug(bug) }}>Edit</button>}
             <button><Link to={`/bug/${bug._id}`}>Details</Link></button>
           </div>
           

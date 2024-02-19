@@ -1,25 +1,16 @@
 import { useState, useEffect } from 'react'
 import { ImgUploader } from './ImgUploader'
 import { userService } from '../services/user.service.js'
+import { useSelector } from 'react-redux'
+import { signup, login, logout } from '../store/actions/user.actions'
+import { showErrorMsg, showSuccessMsg } from '../services/event-bus.service.js'
 
-export function Signin({ onSignup, onLogin }) {
-    const [users, setUsers] = useState([])
+export function Signin() {
     const [credentials, setCredentials] = useState(userService.getEmptyUser())
     const [isSignup, setIsSignup] = useState(false)
-
-    useEffect(() => {
-        loadUsers()
-    }, [])
-
-    async function loadUsers() {
-        try {
-            const users = await userService.getUsers()
-            setUsers(users)
-        } catch (err) {
-            console.log('Had issues loading users', err);
-        }
-    }
-
+    const users = useSelector(storeState => storeState.userModule.users)
+    const loggedinUser = useSelector(storeState => storeState.userModule.loggedinUser)
+    
     function clearState() {
         setCredentials(userService.getEmptyUser())
         setIsSignup(false)
@@ -33,15 +24,36 @@ export function Signin({ onSignup, onLogin }) {
 
     async function onSubmitForm(ev = null) {
         if (ev) ev.preventDefault()
+        
         if (isSignup) {
             if (!credentials.username || !credentials.password || !credentials.fullname) return
-            await onSignup(credentials)
+
+            try {
+                signup(credentials)
+                showSuccessMsg(`Welcome ${credentials.username}`)    
+            } catch (err) {
+                console.log('Cannot signup :', err)
+                showErrorMsg(`Cannot signup`)
+            }
+
+            
         } else {
             if (!credentials.username) return
-            await onLogin(credentials)
+
+            try {
+                login(credentials)
+                showSuccessMsg(`Welcome ${credentials.username}`)                
+            } catch (err) {
+                console.log('Cannot login :', err)
+                showErrorMsg(`Cannot login`)
+            }
         }
         clearState()
     }
+
+    async function onLogout() {
+        logout()
+    }    
 
     function toggleSignup() {
         setIsSignup(prevIsSignup => !prevIsSignup)
@@ -50,8 +62,10 @@ export function Signin({ onSignup, onLogin }) {
     function onUploaded(imgUrl) {
         setCredentials(prevCredentials => ({ ...prevCredentials, imgUrl }))
     }
-    return (
-        <div className="login-page">
+    
+
+    return (<>
+        {!loggedinUser && <div className="login-page">
             <button className="btn-link" onClick={toggleSignup}>{!isSignup ? 'Not a user? Signup' : 'Already a user? Login'}</button>
             {!isSignup && <form className="login-form" onSubmit={onSubmitForm}>
                 <select
@@ -61,7 +75,7 @@ export function Signin({ onSignup, onLogin }) {
                 >
                     <option value="">Select User</option>
                     {
-                        users.map(user =>
+                        users && users.length > 0 && users.map(user =>
                             <option key={user._id} value={user.username}>
                                 {user.fullname}
                             </option>)
@@ -114,10 +128,15 @@ export function Signin({ onSignup, onLogin }) {
                             required
                         />
                         <ImgUploader onUploaded={onUploaded} />
-                        <button >Signup!</button>
+                        <button>Signup!</button>
                     </form>
                 }
             </div>
-        </div>
-    )
+        </div>}
+        {loggedinUser && <div className="user-preview">
+            <h3>Hello {loggedinUser.fullname}
+                <button onClick={onLogout}>Logout</button>
+            </h3>
+        </div>}
+    </>)
 }

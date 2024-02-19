@@ -13,6 +13,7 @@
 /* Components */
 
 @import "cmps/AppHeader.css";
+@import "cmps/AppFooter.css";
 @import "cmps/Home.css";
 @import "cmps/UserMsg.css";
 @import "cmps/BugList.css";
@@ -20,3 +21,4 @@
 @import "cmps/BugDetails.css";
 @import "cmps/UserList.css";
 @import "cmps/UserPreview.css";
+@import "cmps/UserDetails.css";

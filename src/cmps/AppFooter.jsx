@@ -1,16 +1,9 @@
-import { useEffect } from 'react'
-
 export function AppFooter () {
-
-    useEffect(() => {
-        // component did mount when dependancy array is empty
-    }, [])
-
     return (
-        <footer>
+        <footer className='app-footer'>
             <p>
                 coffeerights to all
-            </p>
+            </p> 
         </footer>
     )
 
