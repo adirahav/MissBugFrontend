@@ -63,7 +63,6 @@ export function Signin() {
         setCredentials(prevCredentials => ({ ...prevCredentials, imgUrl }))
     }
     
-
     return (<>
         {!loggedinUser && <div className="login-page">
             <button className="btn-link" onClick={toggleSignup}>{!isSignup ? 'Not a user? Signup' : 'Already a user? Login'}</button>

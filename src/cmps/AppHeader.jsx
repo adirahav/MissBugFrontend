@@ -6,12 +6,17 @@ import { authService } from '../services/auth.service'
 import { showSuccessMsg, showErrorMsg } from '../services/event-bus.service'
 import { useSelector } from 'react-redux'
 import { loadUsers, setLoggedinUser } from '../store/actions/user.actions'
+import { useEffect } from 'react'
 
 export function AppHeader() {
   const loggedinUser = useSelector(storeState => storeState.userModule.loggedinUser)
 
   const isAdmin = loggedinUser?.isAdmin
   const isLoggedin = loggedinUser !== null && loggedinUser !== undefined
+
+  useEffect(() => {
+    loadUsers()
+  })
 
   return (
     <header className='app-header'>

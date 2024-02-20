@@ -9,7 +9,7 @@ const STORAGE_KEY_LOGGEDIN_USER = 'loggedinUser'
 
 const BASE_URL = (process.env.NODE_ENV !== 'development') ?
     '/api/' :
-    '//localhost:5175/api/'
+    '//localhost:5176/api/'
 
 const BASE_AUTH_URL = BASE_URL + 'auth/'
 

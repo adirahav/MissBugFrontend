@@ -10,17 +10,12 @@ export const SIGNUP = 'SIGNUP'
 export const LOGIN = 'LOGIN'
 export const LOGOUT = 'LOGOUT'
 
-async function initializeState() {
-    const users = await userService.getUsers();
-    const loggedinUser = userService.getLoggedinUser();
+const initialState = {
+    users: null,
+    loggedinUser: userService.getLoggedinUser()
+}
 
-    return {
-      users,
-      loggedinUser
-    };
-  }
-
-export async function userReducer(state = {}, action = {}) {
+export function userReducer(state = initialState, action = {}) {
     switch (action.type) {
         case GET_LOGGEDIN_USER:
             return {
@@ -68,5 +63,3 @@ export async function userReducer(state = {}, action = {}) {
             return state
     }
 }
-
-export const initialState = initializeState();
