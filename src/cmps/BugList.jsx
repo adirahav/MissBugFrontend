@@ -6,13 +6,15 @@ import { useSelector } from 'react-redux'
 export function BugList({ bugs, onRemoveBug, onEditBug }) {
   const loggedinUser = useSelector(storeState => storeState.userModule.loggedinUser)
 
-  function allowedDelete(bug) { // event bus / context / store
+  function allowedDelete(bug) { 
     return loggedinUser && (bug.creator?._id === loggedinUser?._id || loggedinUser?.isAdmin) && onRemoveBug
   }
 
-  function allowEdit(bug) { // event bus / context / store
+  function allowEdit(bug) { 
     return loggedinUser && (bug.creator?._id === loggedinUser?._id || loggedinUser?.isAdmin) && onEditBug
   }
+
+  if (bugs.length === 0) return <p><br />No bugs reported</p>
 
   return (
     <ul className="bug-list">

@@ -129,7 +129,6 @@ export function BugIndex() {
   }
   
   if (!bugs) return <div>Loading...</div>
-  if (bugs.list.length === 0) return <div><button onClick={onAddBug}>Add Bug ⛐</button><p>No bugs reported</p></div>
   
   return (
     <main className="main-layout">

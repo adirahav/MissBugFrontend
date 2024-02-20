@@ -6,7 +6,7 @@ const axios = Axios.create({
 
 const BASE_URL = (process.env.NODE_ENV !== 'development') ?
     '/api/' :
-    '//localhost:5176/api/'
+    '//localhost:5175/api/'
 
 const BASE_BUG_URL = BASE_URL + 'bug/'
 
@@ -33,8 +33,8 @@ async function query(sort, filterBy) {
         console.log("Had problems getting bugs")
         throw err
     }
-    //http://127.0.0.1:5176/api/bug/?severity=&txt=d
-    //http://127.0.0.1:5176/api/bug/?severity-1&txt
+    //http://127.0.0.1:5175/api/bug/?severity=&txt=d
+    //http://127.0.0.1:5175/api/bug/?severity-1&txt
 }
 
 async function getById(bugId) {
